@@ -1,0 +1,42 @@
+{% extends "layout_coin.html" %}
+
+{% block title %}
+    INDEX
+{% endblock %}
+{% block main %}
+    <div>
+        <table class="table table-bordered">
+            <thead >
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Count</th>
+                    <th scope="col">Current Price</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                {% for coin in coins_all %}
+                <tr>
+                    <td>{{ coin.coin_id }}</td>
+                    <td>{{ coin.coins }}</td>
+                    <td>{{ current_price[coin.coin_id] }}</td>
+                    {% set total = current_price[coin.coin_id] * coin.coins %}
+                    <td>{{ total | usd_coin }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="border border-white">
+                    <td></td>
+                    <td></td>
+                    <td class="border border-4" ><strong>Wallet:</strong></td>
+                    <td class="border border-4" ><strong>{{ wallet | usd_coin }}</strong></td>
+                </tr>
+                <tr class="border border-white">
+                    <td  ></td>
+                    <td ></td>
+                    <td class="border border-4"><strong>Grand Total:</strong></td>
+                    <td class="border border-4"><strong>{{ value | usd_coin }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

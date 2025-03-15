@@ -1,0 +1,16 @@
+{% extends "layout_angel.html" %}
+
+{% block title %}
+    WALLET
+{% endblock %}
+
+{% block main %}
+    <p><strong>Current Wallet : {{ current_balance | inr }}</strong></p>
+    <form action="/wallet_angel" method="POST">
+        <input class="form-control mx-auto w-auto" autocomplete ="off"  autofocus type = "number" name = "amount" placeholder = "Amount" required>
+        <p>{{ apology }}</p>
+        <button class="btn btn-primary" type ="submit">Add Money</button> 
+        
+    </form>
+
+{% endblock %}

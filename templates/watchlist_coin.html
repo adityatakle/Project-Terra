@@ -1,0 +1,45 @@
+{% extends "layout_coin.html" %}
+
+{% block title %}
+    WATCHLIST
+{% endblock %}
+{% block main %}
+    <form action="/watchlist_coin" method="post">
+        <input  name="id" type="text" autocomplete="off" placeholder="Add Crytpo Id" required>
+        <button type = "submit">Add Coin</button>
+        <p>{{ apology }}</p>
+        <p></p>
+    </form>
+    <div>
+        <table>
+            <tbody>
+                <tr class="border border-white">
+                    <td></td>
+                    <td></td>
+                    <td class="border border-4" ><strong>Wallet:</strong></td>
+                    <td class="border border-4" ><strong>{{ wallet | usd_coin }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead >
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scopre ="col">Name</th>
+                    <th scope="col">Current Price</th>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                
+                {% for coin in coins_all %}
+                <tr>
+                    <td>{{ coin.id }} </td>
+                    <td>{{ coin.name }} </td>
+                    <td>{{ current_price[coin.id] | usd_coin }} </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

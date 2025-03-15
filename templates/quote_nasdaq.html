@@ -1,0 +1,19 @@
+{% extends "layout_nasdaq.html" %}
+{% block title%}
+    QUOTE
+{% endblock %}
+
+{% block main%}
+    <form action="/quote_nasdaq" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Symbol" type="text">
+        </div>
+        {% if find %}
+            <p><strong>Company: {{ find.name }} ({{ find.symbol }}) </strong>  </p>
+            <p><strong> {{ find.price | usd_nasdaq }}</strong></p>
+        {% endif %}
+        <button class="btn btn-primary" type="submit">Search</button>
+        <p>{{apology}}</p>
+    </form>
+
+{% endblock%}

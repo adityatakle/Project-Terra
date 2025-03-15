@@ -1,0 +1,24 @@
+{% extends "layout_angel.html" %}
+{% block title%}
+    QUOTE
+{% endblock %}
+
+{% block main%}
+    <form action="/quote_angel" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="token" placeholder="token id" type="text">
+        </div>
+        {% if find %}
+            <p><strong>Crypto name: {{ find.symbol }} ({{ find.token }}) </strong>  </p>
+            <p><strong> {{ find.price | inr }}</strong></p>
+        {% endif %}
+        <button class="btn btn-primary" type="submit">Search</button>
+        <p>{{apology}}</p>
+    </form>
+{% endblock%}
+{% block footer %}
+    <div class="text-center">
+        <a href = "https://www.coingecko.com/"><img src = "/static/coingecko.png"></a>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,18 @@
+{% extends "layout_nasdaq.html" %}
+{% block title %}
+    SELL
+{% endblock %}
+{% block main %}
+    <form action="/sell_nasdaq" method="POST">
+        <select name = "symbol">
+            <option disabled selected value="">Share</option>
+            {% for stock in stocks_all %}
+            {% set sym = stock.symbol%}
+            <option value = "{{ sym }}">{{ stock.symbol }}</option>
+            {% endfor %}
+        </select>
+        <input autocomplete = "off" name = "shares" placeholder = "Quantity" required>
+        <button class="btn btn-primary" type = "submit">Sell</button>
+        <p>{{ apology }}</p>
+    </form>
+{% endblock %}

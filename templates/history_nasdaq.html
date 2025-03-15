@@ -1,0 +1,33 @@
+{% extends "layout_nasdaq.html" %}
+{% block title %}
+    HISTORY
+{% endblock %}
+{% block main %}
+    <form>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>TYPE</td>
+                    <td>SYMBOL</td>
+                    <td>PRICE</td>
+                    <td>COUNT</td>
+                    <td>VALUE</td>
+                    <td>TIMESTAMP</td>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                {% for trans in history%}
+                <tr>
+                    <td>{{ trans.type}}</td>
+                    <td>{{ trans.symbol }}</td>
+                    <td>{{ trans.price | usd_nasdaq }}</td>
+                    <td>{{ trans.shares }}</td>
+                    {% set value = trans.price * trans.shares %}
+                    <td>{{ value | usd_nasdaq }}</td>
+                    <td>{{ trans.timestamp }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </form>
+{% endblock %}

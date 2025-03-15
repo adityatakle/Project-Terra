@@ -1,0 +1,15 @@
+{% extends "layout_nasdaq.html" %}
+
+{%block title%}
+    BUY
+{% endblock %}
+
+{%block main%}
+    <form action="/buy_nasdaq" method = "POST">
+        <input autocomplete="off"  autofocus type="word" name="symbol" placeholder="Symbol" required>
+        <input autocomplete="off" type="number" name="shares" placeholder="Shares number" required>
+        <button class="btn btn-primary" type="submit">BUY</button>
+        <p>{{ apology }}</p>
+    </form>
+
+{% endblock %}

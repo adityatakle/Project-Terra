@@ -1,0 +1,33 @@
+{% extends "layout_angel.html" %}
+{% block title %}
+    HISTORY
+{% endblock %}
+{% block main %}
+    <form>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>TYPE</td>
+                    <td>TOKEN</td>
+                    <td>PRICE</td>
+                    <td>COUNT</td>
+                    <td>VALUE</td>
+                    <td>TIMESTAMP</td>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                {% for trans in history%}
+                <tr>
+                    <td>{{ trans.type}}</td>
+                    <td>{{ trans.token }}</td>
+                    <td>{{ trans.price | inr }}</td>
+                    <td>{{ trans.shares }}</td>
+                    {% set value = trans.price * trans.shares %}
+                    <td>{{ value | inr }}</td>
+                    <td>{{ trans.timestamp }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </form>
+{% endblock %}

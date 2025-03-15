@@ -1,0 +1,45 @@
+{% extends "layout_angel.html" %}
+
+{% block title %}
+    WATCHLIST
+{% endblock %}
+{% block main %}
+    <form action="/watchlist_angel" method="post">
+        <input name="token" type="text" autocomplete="off" placeholder="Add Stock" required>
+        <p>{{ apology }}</p>
+        <button type = "submit">Add Stock</button>
+        <p></p>
+    </form>
+    <div>
+        <table>
+            <tbody>
+                <tr class="border border-white">
+                    <td></td>
+                    <td></td>
+                    <td class="border border-4" ><strong>Wallet:</strong></td>
+                    <td class="border border-4" ><strong>{{ wallet | inr }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead >
+                <tr>
+                    <th scope="col">Token</th>
+                    <th scopre ="col">Symbol</th>
+                    <th scope="col">Current Price</th>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                
+                {% for stock in stocks_all %}
+                <tr>
+                    <td>{{ stock.token }} </td>
+                    <td>{{ stock.symbol }} </td>
+                    <td>{{ current_price[stock.token] | inr }} </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

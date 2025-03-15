@@ -1,0 +1,34 @@
+{% extends "layout_coin.html" %}
+{% block title %}
+    HISTORY
+{% endblock %}
+{% block main %}
+    <form>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>TYPE</td>
+                    <td>COIN ID </td>
+                    <td>PRICE</td>
+                    <td>COUNT</td>
+                    <td>VALUE</td>
+                    <td>TMESTAMP</td>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                {% for trans in history %}
+                <tr>
+                    <td>{{ trans.type}}</td>
+                    <td>{{ trans.coin_id }}</td>
+                    <td>{{ trans.price | usd_coin }}</td>
+                    <td>{{ trans.coins }}</td>
+                    {% set value = trans.price * trans.coins %}
+                    <td>{{ value | usd_coin }}</td>
+                    <td>{{ trans.timestamp }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </form>
+{% endblock %}
+

@@ -1,0 +1,24 @@
+{% extends "layout_coin.html" %}
+{% block title%}
+    QUOTE
+{% endblock %}
+
+{% block main%}
+    <form action="/quote_coin" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="id" placeholder="id" type="text">
+        </div>
+        {% if find %}
+            <p><strong>Crypto name: {{ find.name }} ({{ find.id }}) </strong>  </p>
+            <p><strong> {{ find.current_price | usd_coin }}</strong></p>
+        {% endif %}
+        <button class="btn btn-primary" type="submit">Search</button>
+        <p>{{apology}}</p>
+    </form>
+{% endblock%}
+{% block footer %}
+    <div class="text-center">
+        <a href = "https://www.coingecko.com/"><img src = "/static/coingecko.png"></a>
+    </div>
+{% endblock %}
+

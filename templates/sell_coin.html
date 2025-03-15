@@ -1,0 +1,19 @@
+{% extends "layout_coin.html" %}
+{% block title %}
+    SELL
+{% endblock %}
+{% block main %}
+    <form action="/sell_coin" method="POST">
+        <select name = "id">
+            <option disabled selected value="">Share</option>
+            {% for coin in coins_all %}
+            {% set sym = coin.id %}
+            <option value = "{{ coin.coin_id }}">{{ coin.coin_id }}</option>
+            {% endfor %}
+        </select>
+        <input  autocomplete = "off" name = "coins" placeholder = "Quantity" required>
+        <button class="btn btn-primary" type = "submit">Sell</button>
+        <p>{{ apology }}</p>
+    </form>
+{% endblock %}
+

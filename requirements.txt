@@ -1,0 +1,10 @@
+cs50
+flask
+flask-Session
+pytz
+requests
+dotenv
+http.client
+pyotp
+logzero
+SmartApi

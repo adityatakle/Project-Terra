@@ -1,0 +1,42 @@
+{% extends "layout_angel.html" %}
+
+{% block title %}
+    INDEX
+{% endblock %}
+{% block main %}
+    <div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Token</th>
+                    <th scope="col">Count</th>
+                    <th scope="col">Current Price</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody  class="table-group-divider" >
+                {% for stock in stocks_all %}
+                <tr>
+                    <td>{{ stock.token }} </td>
+                    <td>{{ stock.shares }} </td>
+                    <td>{{ current_price[stock.token] | inr }} </td>
+                    {% set total = current_price[stock.token] * stock.shares %}
+                    <td>{{ total | inr }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="border border-white">
+                    <td></td>
+                    <td></td>
+                    <td class="border border-4" ><strong>Wallet:</strong></td>
+                    <td class="border border-4" ><strong>{{ wallet | inr }}</strong></td>
+                </tr>
+                <tr class="border border-white">
+                    <td></td>
+                    <td></td>
+                    <td class="border border-4" ><strong>Grand Total:</strong></td>
+                    <td class="border border-4" ><strong>{{ value | inr }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

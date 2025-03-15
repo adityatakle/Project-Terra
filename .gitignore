@@ -1,0 +1,7 @@
+__pycache__
+flask_session
+.env
+3
+terra
+finance.db
+helpers.py

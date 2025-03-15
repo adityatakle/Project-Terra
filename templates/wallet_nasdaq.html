@@ -1,0 +1,15 @@
+{% extends "layout_nasdaq.html" %}
+
+{% block title %}
+    WALLET
+{% endblock %}
+
+{% block main %}
+    <p><strong>Current Wallet : {{ current_balance | usd_nasdaq }}</strong></p>
+    <form action="/wallet_nasdaq" method="POST">
+        <input class="form-control mx-auto w-auto" autocomplete ="off"  autofocus type = "number" name = "amount" placeholder = "Amount" required>
+        <button class="btn btn-primary" type ="submit">Add Money</button> 
+        <p>{{apology}}</p>
+    </form>
+
+{% endblock %}
