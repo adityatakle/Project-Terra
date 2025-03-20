@@ -9,13 +9,16 @@ from helpers import login_required, lookup, usd_nasdaq, coin, usd_coin, angel_qu
 # Configure application
 app = Flask(__name__)
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
 # Custom filter
 app.jinja_env.filters["usd_nasdaq"] = usd_nasdaq
 app.jinja_env.filters["usd_coin"] = usd_coin
 app.jinja_env.filters["inr"] = inr
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
@@ -133,6 +136,7 @@ def login():
 
         # Redirect user to home page
         return redirect("/")
+        
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:

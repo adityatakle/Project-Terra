@@ -7,4 +7,3 @@ dotenv
 http.client
 pyotp
 logzero
-SmartApi
