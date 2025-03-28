@@ -118,10 +118,6 @@ def angel_quote(tokens, exchange):
         print(f"Data parsing error: {e}")
     return None
 
-    
-
-
-
 def coin(id):
     url = f"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={id.lower()}"
 
@@ -176,7 +172,6 @@ def lookup(symbol):
     except (KeyError, ValueError) as e:
         print(f"Data parsing error: {e}")
     return None
-
 
 
 def usd_nasdaq(value):
