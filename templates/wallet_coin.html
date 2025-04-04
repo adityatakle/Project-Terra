@@ -8,8 +8,9 @@
     <p><strong>Current Wallet : {{ current_balance | usd_coin }}</strong></p>
     <form action="/wallet_coin" method="POST">
         <input class="form-control mx-auto w-auto" autocomplete ="off"  autofocus type = "number" name = "amount" placeholder = "Amount" required>
-        <button class="btn btn-primary" type ="submit">Add Money</button> 
         <p>{{apology}}</p>
+        <button class="btn btn-primary" type ="submit">Add Money</button> 
+        
     </form>
 
 {% endblock %}
