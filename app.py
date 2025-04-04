@@ -1245,10 +1245,9 @@ def watchlist_nasdaq():
     # User reached route via GET (as by clicking a link or via redirect)
     return render_template("watchlist_nasdaq.html",stocks_all = stocks_all, current_price = current_price, wallet = wallet)
 
-'''        
+'''
 @app.route("/options_ism", methods=["GET", "POST"])
 @login_required
 def watchlist_nasdaq():
     if request.method == "POST":
 '''
-
