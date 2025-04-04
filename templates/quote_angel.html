@@ -6,7 +6,7 @@
 {% block main%}
     <form action="/quote_angel" method="post">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="token" placeholder="token id" type="text">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="name" placeholder="token id" type="text">
         </div>
         {% if find %}
             <p><strong>Crypto name: {{ find.symbol }} ({{ find.token }}) </strong>  </p>

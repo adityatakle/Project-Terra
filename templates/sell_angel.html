@@ -8,7 +8,7 @@
             <option disabled selected value="">Share</option>
             {% for stock in stocks_all %}
             {% set sym = stock.token %}
-            <option value = "{{ sym }}">{{ stock.token }}</option>
+            <option value = "{{ sym }}">{{ stock.name }}</option>
             {% endfor %}
         </select>
         <input autocomplete = "off" name = "shares" placeholder = "Quantity" required>

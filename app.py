@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timezone
-from helpers import login_required, lookup, usd_nasdaq, coin, usd_coin, angel_quote, inr
+from helpers import login_required, lookup, usd_nasdaq, coin, usd_coin, angel_quote, inr, angel_login
 
 # Configure application
 app = Flask(__name__)
@@ -34,12 +34,14 @@ users_db_path = os.path.join(db_dir, "users.db")
 nasdaq_db_path = os.path.join(db_dir, "nasdaq.db")
 crypto_db_path = os.path.join(db_dir, "crypto.db")
 angel_db_path = os.path.join(db_dir, "angel.db")
+ism_db_path = os.path.join(db_dir, "instruments_ism.db")
 
 # Create database connections
 users_db = SQL(f"sqlite:///{users_db_path}")
 nasdaq_db = SQL(f"sqlite:///{nasdaq_db_path}")
 crypto_db = SQL(f"sqlite:///{crypto_db_path}")
 angel_db = SQL(f"sqlite:///{angel_db_path}")
+ism_db = SQL(f"sqlite:///{ism_db_path}")
 
 
 @app.after_request
@@ -51,6 +53,7 @@ def after_request(response):
     return response
 
 EXCHANGE = "NSE"
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -173,10 +176,11 @@ def buy_angel():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # Get input and store in variable.
-        token = request.form.get("token")
+        token = request.form.get("token").strip()
         shares = request.form.get("shares")
         # Convert symbol to upper case
-        token = int(token)
+        token = token.upper()
+        name = token.upper()
         
         # declare variable to display message.
         message = None 
@@ -201,6 +205,14 @@ def buy_angel():
         if shares <= 0:
             message = "INVALID SHARES INPUT"
             return render_template("buy_angel.html", apology = message)
+        
+        token = ism_db.execute("SELECT token FROM scrip_NSE WHERE name = ?", token)
+        
+        # Ensure token is not empty
+        if not token:
+            message = "COMPANY NAME NOT FOUND"
+            return render_template("buy_angel.html", apology=message)
+        token = (token[0]["token"])
         
         # Get info about symbol
         find = angel_quote(token, EXCHANGE)
@@ -237,14 +249,14 @@ def buy_angel():
         
         # If does not exist then make a new entry and store in portfolio table. 
         else:
-            angel_db.execute("INSERT INTO portfolio (user_id, token, shares) VALUES (?, ?, ?)",
-                       session["user_id"], token, shares)
+            angel_db.execute("INSERT INTO portfolio (user_id, token, name, shares) VALUES (?, ?, ?, ?)",
+                       session["user_id"], token, name, shares)
         
         # Insert transaction in buy and history tables. 
-        angel_db.execute("INSERT INTO buy (user_id, token, shares, price, timestamp) VALUES (?,?,?,?,?)",
-                   session["user_id"], token, shares, price, now_utc)
-        angel_db.execute("INSERT INTO history (user_id, token, shares, price, timestamp, type) VALUES (?,?,?,?,?,'BUY')",
-                   session["user_id"], token, shares, price, now_utc)
+        angel_db.execute("INSERT INTO buy (user_id, token, name, shares, price, timestamp) VALUES (?,?,?,?,?,?)",
+                   session["user_id"], token, name, shares, price, now_utc)
+        angel_db.execute("INSERT INTO history (user_id, token, name, shares, price, timestamp, type) VALUES (?,?,?,?,?,?,'BUY')",
+                   session["user_id"], token, name, shares, price, now_utc)
         # Update wallet money in users table.
         users_db.execute("UPDATE users SET angel_cash = ? WHERE id = ?",
                    wallet - total_price, session["user_id"])
@@ -472,23 +484,23 @@ def history_nasdaq():
 @login_required
 def index_angel():
     # Execute query to get token and shares from portfolio table. 
-    tokens_all = angel_db.execute(
-        "SELECT token, shares FROM portfolio WHERE user_id = ? GROUP BY token", session["user_id"])
+    stocks_all = angel_db.execute(
+        "SELECT token,name, shares FROM portfolio WHERE user_id = ? GROUP BY name", session["user_id"])
 
     # Get current price of tokens from portfolio table.
     current_price = {}
-    for tokens in tokens_all:
-        find = angel_quote(tokens["token"], EXCHANGE)
-        current_price[tokens["token"]] = float(find["price"])
+    for stock in stocks_all:
+        find = angel_quote(stock["token"], EXCHANGE)
+        current_price[stock["token"]] = float(find["price"])
 
     # Execute query from users table to get angel cash of user. 
     wallet = users_db.execute("SELECT angel_cash FROM users WHERE id = ?", session["user_id"])
     wallet = wallet[0]["angel_cash"]
-    value = sum(current_price[tokens["token"]] * int(tokens["token"]) for tokens in tokens_all)
+    value = sum(current_price[tokens["token"]] * int(tokens["token"]) for tokens in stocks_all)
     value += wallet
     
     # User reached route via GET (as by clicking a link or via redirect)
-    return render_template("index_angel.html", stocks_all=tokens_all, current_price=current_price, value=value, wallet=wallet)
+    return render_template("index_angel.html", stocks_all=stocks_all, current_price=current_price, value=value, wallet=wallet)
 
 
 @app.route("/coin")
@@ -543,7 +555,7 @@ def quote_angel():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # Store token in variable
-        quote = int(request.form.get("token").strip())
+        quote = request.form.get("name").strip()
         
         # declare message variable as None for default
         message = None
@@ -552,13 +564,21 @@ def quote_angel():
         if not quote:
             message = "quote field empty"
             return render_template("quote_token.html", apology=message)
+        quote = quote.upper()
+
+        quote = ism_db.execute("SELECT token FROM scrip_NSE WHERE name = ?", quote)
         
+        # Ensure token is not empty
+        if not quote:
+            message = "COMPANY NAME NOT FOUND"
+            return render_template("quote_angel.html", apology=message)
+        quote = int(quote[0]["token"])
         # get info about token
         find = angel_quote(quote, EXCHANGE)
 
         # Give user message if the token is invalid.
         if find is None:
-            message = "Wrong quote token id"
+            message = "Wrong company name"
             return render_template("quote_angel.html", apology = message)
         
         # Return information of token.
@@ -638,9 +658,9 @@ def quote_nasdaq():
 @app.route("/sell_angel", methods=["GET", "POST"])
 @login_required
 def sell_angel():
-    # Execute query from buy table to get tokens and sum of shares of user.
+    # Execute query from buy table to get tokens, name and sum of shares of user.
     stocks_all = angel_db.execute(
-        "SELECT token, SUM(shares) AS s FROM buy WHERE user_id = ? GROUP BY token", session["user_id"])
+        "SELECT token, name, SUM(shares) AS s FROM portfolio WHERE user_id = ? GROUP BY token", session["user_id"])
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -713,11 +733,14 @@ def sell_angel():
         # Current time
         now_utc = datetime.now(timezone.utc)
         
+        name = angel_db.execute("SELECT name FROM buy WHERE user_id = ? AND token = ?", session["user_id"], token)
+        name = name[0]["name"]
+
         # Insert transaction in sell and history table.
-        angel_db.execute("INSERT INTO sell (user_id, token, shares, price, timestamp) VALUES (?,?,?,?,?)",
-                   session["user_id"], token, shares, current_sale_price, now_utc)
-        angel_db.execute("INSERT INTO history (user_id, token, shares, price, timestamp, type) VALUES (?,?,?,?,?,'SELL')",
-                   session["user_id"], token, shares, current_sale_price, now_utc)
+        angel_db.execute("INSERT INTO sell (user_id, token, name, shares, price, timestamp) VALUES (?,?,?,?,?,?)",
+                   session["user_id"], token, name, shares, current_sale_price, now_utc)
+        angel_db.execute("INSERT INTO history (user_id, token, name, shares, price, timestamp, type) VALUES (?,?,?,?,?,?,'SELL')",
+                   session["user_id"], token, name, shares, current_sale_price, now_utc)
         # Update wallet money in users table.
         users_db.execute("UPDATE users SET nasdaq_cash = nasdaq_cash + ? WHERE id = ?",
                    total_sale_value, session["user_id"])
@@ -954,7 +977,7 @@ def wallet_angel():
             return render_template("wallet_angel.html", current_balance = current_balance, apology = message)
         
         # Execute query to update wallet of user.
-        users_db.execute("UPDATE users SET nasdaq_cash = ? WHERE id = ?", amount + current_balance, session["user_id"])
+        users_db.execute("UPDATE users SET angel_cash = ? WHERE id = ?", amount + current_balance, session["user_id"])
         
         # redirect to portfolio
         return redirect("/angel")
@@ -1052,7 +1075,7 @@ def watchlist_angel():
     wallet = wallet[0]["angel_cash"]
     
     # Load watchlist from table
-    stocks_all = angel_db.execute("SELECT token, token FROM watchlist WHERE user_id = ? ORDER BY token ASC", session["user_id"])
+    stocks_all = angel_db.execute("SELECT token, name, symbol FROM watchlist WHERE user_id = ? ORDER BY name ASC", session["user_id"])
     current_price = {}
     for stock in stocks_all:
         fin = angel_quote(stock["token"], EXCHANGE)
@@ -1061,8 +1084,16 @@ def watchlist_angel():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # Load token from user input and convert to from string to integer. 
-        token = request.form.get("token")
-        token = int(token)
+        name = request.form.get("token").strip()
+        name = name.upper()
+        token = ism_db.execute("SELECT token FROM scrip_NSE WHERE name = ?", name)
+        symbol = ism_db.execute("SELECT symbol FROM scrip_NSE WHERE name = ?", name)
+        if not token or not symbol:
+            message = "Wrong input"
+            return render_template("watchlist_angel.html",stocks_all = stocks_all, current_price = current_price, wallet = wallet, apology = message )
+
+        symbol = symbol[0]["symbol"]
+        token = (token[0]["token"])
     
         # Declare message variable as None for default
         message = None
@@ -1075,25 +1106,20 @@ def watchlist_angel():
         # Get info of token
         find = angel_quote(token, EXCHANGE)
 
-        # Give user message if the token is invalid.
-        if find is None:
-            message = "ENTER VALID STOCK SYMBOL"
-            return render_template("watchlist_angel.html",stocks_all = stocks_all, current_price = current_price, wallet = wallet, apology = message )
-
         # Query portfolio table and store tokens in variable.
         port = angel_db.execute("SELECT token FROM watchlist WHERE user_id = ?", session["user_id"])
-        existing_tokens = {int(row["token"]) for row in port}
+        existing_tokens = {(row["token"]) for row in port}
 
         # Insert info about token if it does not already exist.
         if token not in existing_tokens:
-            angel_db.execute("INSERT INTO watchlist (user_id, token, symbol) VALUES (?,?,?)", session["user_id"], find["token"], find["symbol"])
+            angel_db.execute("INSERT INTO watchlist (user_id, token,name, symbol) VALUES (?,?,?,?)", session["user_id"], token, name, symbol)
         # Shows message if it already exist.
         if token in existing_tokens:
             message = "ALREADY EXIST IN WATCHLIST"
             return render_template("watchlist_angel.html",stocks_all = stocks_all, current_price = current_price, wallet = wallet, apology = message )
     
     # Query watchlist from table. 
-    stocks_all = angel_db.execute("SELECT token, symbol FROM watchlist WHERE user_id = ? ORDER BY symbol ASC", session["user_id"])
+    stocks_all = angel_db.execute("SELECT token, name, symbol FROM watchlist WHERE user_id = ? ORDER BY symbol ASC", session["user_id"])
     current_price = {}
     for stock in stocks_all:
         fin = angel_quote(stock["token"], EXCHANGE)
@@ -1218,5 +1244,11 @@ def watchlist_nasdaq():
     
     # User reached route via GET (as by clicking a link or via redirect)
     return render_template("watchlist_nasdaq.html",stocks_all = stocks_all, current_price = current_price, wallet = wallet)
-        
+
+'''        
+@app.route("/options_ism", methods=["GET", "POST"])
+@login_required
+def watchlist_nasdaq():
+    if request.method == "POST":
+'''
 
