@@ -1,72 +1,148 @@
 <!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 
-    <head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
 
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width">
+    <title>PROJECT TERRA: {% block title %}{% endblock %}</title>
 
-        <!-- http://getbootstrap.com/docs/5.3/ -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- https://favicon.io/emoji-favicons/money-bag/ -->
-        <link href="/static/favicon.ico" rel="icon">
+    <!-- Favicon & Custom Fonts -->
+    <link href="/static/favicon.ico" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-        <link href="/static/styles.css" rel="stylesheet">
+    <!-- Styles -->
+    <link href="/static/styles.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #f4f7f9, #e0eafc);
+            min-height: 100vh;
+        }
 
-        <title>PROJECT TERRA: {% block title %}{% endblock %}</title>
+        nav.navbar {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        }
 
-    </head>
+        .navbar-brand span {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
 
-    <body>
+        .nav-link {
+            color: #f0f0f0 !important;
+            font-weight: 500;
+        }
 
-        <nav class="bg-light border navbar navbar-expand-md navbar-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/coin"><span class="blue">TERRA</span></a>
-                <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbar">
-                    {% if session["user_id"] %}
-                        <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/coin">Index</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/quote_coin">Quote</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/buy_coin">Buy</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/sell_coin">Sell</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/watchlist_coin">Watchlist</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/history_coin">History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/wallet_coin">Add Cash</a></li>
+        .nav-link:hover {
+            color: #ffffff !important;
+            text-decoration: underline;
+        }
+
+        .alert {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        main.container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            padding: 30px 0 10px;
+        }
+
+        footer hr {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/nasdaq"><span class="red">TERRA</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                {% if session["user_id"] %}
+                <ul class="navbar-nav me-auto mt-2">
+                    <li class="nav-item mx-3"><a class="nav-link" href="/coin">📈 <strong>PORTFOLIO</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/quote_coin">🔍 <strong>QUOTE</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/buy_coin">🛒 <strong>BUY</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/sell_coin">💵 <strong>SELL</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/watchlist_coin">👁️ <strong>WATCHLIST</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/history_coin">⏳ <strong>HISTORY</strong></a></li>
+                    <li class="nav-item mx-3"><a class="nav-link" href="/wallet_coin">👛 <strong>ADD CASH</strong></a></li>
+                </ul>
+                
+                
+                
+                    <ul class="navbar-nav ms-auto mt-2">
+                        <li class="nav-item mx-3"><a class="nav-link" href="/"><i class="fas fa-bars me-1"></i> <strong>MENU</strong></a></li>
+                        <li class="nav-item mx-3"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> <strong>LOG OUT </strong></a></li>
+                    
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ms-auto mt-2">
+                        <li class="nav-item mx-3"><a class="nav-link" href="/register"><i class="fas fa-bars me-1"></i> <strong>REGISTER</strong></a></li>
+                        <li class="nav-item mx-3"><a class="nav-link" href="/login"><i class="fas fa-sign-out-alt me-1"></i> <strong>LOG IN </strong></a></li>
+
                         </ul>
-                        <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/">Menu</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-                        </ul>
-                    {% else %}
-                        <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
-                        </ul>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        {% if get_flashed_messages() %}
-            <header>
-                <div class="alert alert-primary mb-0 text-center" role="alert">
-                    {{ get_flashed_messages() | join(" ") }}
-                </div>
-            </header>
-        {% endif %}
+    <!-- Flash Messages -->
+    {% if get_flashed_messages() %}
+    <header>
+        <div class="alert alert-primary mb-0 text-center" role="alert">
+            {{ get_flashed_messages() | join(" ") }}
+        </div>
+    </header>
+    {% endif %}
 
-        <main class="container py-5 text-center">
-            {% block main %}{% endblock %}
-        </main>
-        <footer class="mb-5">
-            {% block footer %}{% endblock %}
-        </footer>
-    </body>
+    <!-- Main Content -->
+    <main class="container my-5 text-center">
+        {% block main %}{% endblock %}
+    </main>
+
+    <footer class="mb-5">
+            
+    </footer>
+
+</body>
 
 </html>
