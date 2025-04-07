@@ -19,7 +19,7 @@
                 <tr>
                     <td>{{ stock.symbol }} </td>
                     <td>{{ stock.shares }} </td>
-                    <td>{{ current_price[stock.symbol] }} </td>
+                    <td>{{ current_price[stock.symbol] | usd_coin }} </td>
                     {% set total = current_price[stock.symbol] * stock.shares %}
                     <td>{{ total | usd_nasdaq }}</td>
                 </tr>

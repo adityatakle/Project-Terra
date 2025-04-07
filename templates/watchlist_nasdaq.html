@@ -35,7 +35,7 @@
                 <tr>
                     <td>{{ stock.symbol }} </td>
                     <td>{{ stock.name }} </td>
-                    <td>{{ current_price[stock.symbol] }} </td>
+                    <td>{{ current_price[stock.symbol] | usd_coin }} </td>
                 </tr>
                 {% endfor %}
                 

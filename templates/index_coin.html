@@ -19,7 +19,7 @@
                 <tr>
                     <td>{{ coin.coin_id }}</td>
                     <td>{{ coin.coins }}</td>
-                    <td>{{ current_price[coin.coin_id] }}</td>
+                    <td>{{ current_price[coin.coin_id]  | usd_coin }}</td>
                     {% set total = current_price[coin.coin_id] * coin.coins %}
                     <td>{{ total | usd_coin }}</td>
                 </tr>

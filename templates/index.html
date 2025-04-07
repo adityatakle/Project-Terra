@@ -120,6 +120,7 @@
     {% if get_flashed_messages() %}
     <header>
         <div class="alert alert-primary mb-0 text-center" role="alert">
+            
             {{ get_flashed_messages() | join(" ") }}
         </div>
     </header>
@@ -127,11 +128,13 @@
 
     <!-- Main Content -->
     <main class="container text-center">
+        <h2>Welcome to Terra</h2>
+        <br>
         <table>
             <thead>
                 <tr>
                     <td><a href="/nasdaq"><img id="nasdaq-logo" src="/static/nasdaq--big.webp" height="300px" width="300px"></a></td>
-                    <td><a href="/coin"><img id="crypto-logo" src="/static/crypto_coin.jpg" height="300px" width="300px"></a></td>
+                    <td><a href="/coin"><img id="crypto-logo" src="/static/crypto_coin.jpg" height="310px" width="310px"></a></td>
                     <td><a href="/angel"><img id="angel-logo" src="/static/nse_bse_logo.png" height="300px" width="300px"></a></td>
                 </tr>
                 <tr>
